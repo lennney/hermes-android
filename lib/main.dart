@@ -58,7 +58,7 @@ class HermesAppState extends State<HermesApp> {
     const gold = Color(0xFFD4AF37);
 
     return MaterialApp(
-      title: S.of(context).appTitle,
+      title: 'Hermes',
       locale: _locale,
       themeMode: HermesApp.getThemeMode(widget.connManager.prefs),
       theme: ThemeData(
