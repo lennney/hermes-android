@@ -111,4 +111,6 @@ const Map<String, String> appLocalizationsEn = {
   'language': 'Language',
   'languageEnglish': 'English',
   'languageChinese': '简体中文',
+  'thinking': 'Thinking',
+  'thinkingEllipsis': 'Thinking…',
 };

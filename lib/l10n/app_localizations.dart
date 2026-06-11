@@ -190,6 +190,10 @@ class S {
   String get language => _t('language');
   String get languageEnglish => _t('languageEnglish');
   String get languageChinese => _t('languageChinese');
+
+  // ─── Thinking ──────────────────────────────────────────
+  String get thinking => _t('thinking');
+  String get thinkingEllipsis => _t('thinkingEllipsis');
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

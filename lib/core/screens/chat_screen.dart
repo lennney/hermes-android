@@ -425,6 +425,99 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
+/// Parse thinking content from message. Returns (thinking, remainingContent).
+/// Handles both complete and partial <think> tags (during streaming).
+(List<String>, String) _parseThinking(String content) {
+  final thinkingParts = <String>[];
+  var remaining = content;
+
+  // Extract complete <think>...</think> blocks
+  final completePattern = RegExp(r'<think>(.*?)</think>', dotAll: true);
+  for (final match in completePattern.allMatches(remaining)) {
+    thinkingParts.add(match.group(1) ?? '');
+  }
+  remaining = remaining.replaceAll(completePattern, '');
+
+  // Handle partial <think> tag (streaming - tag opened but not closed)
+  final partialIdx = remaining.indexOf('<think>');
+  if (partialIdx >= 0) {
+    thinkingParts.add(remaining.substring(partialIdx + 8));
+    remaining = remaining.substring(0, partialIdx);
+  }
+
+  return (thinkingParts, remaining.trim());
+}
+
+class _ThinkingBlock extends StatefulWidget {
+  final String thinking;
+  final bool isDark;
+
+  const _ThinkingBlock({required this.thinking, required this.isDark});
+
+  @override
+  State<_ThinkingBlock> createState() => _ThinkingBlockState();
+}
+
+class _ThinkingBlockState extends State<_ThinkingBlock> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(
+                    _expanded ? Icons.expand_less : Icons.expand_more,
+                    size: 18,
+                    color: widget.isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _expanded ? S.of(context).thinking : S.of(context).thinkingEllipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: widget.isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_expanded)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: Text(
+                widget.thinking.trim(),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: widget.isDark ? Colors.grey[500] : Colors.grey[600],
+                  height: 1.4,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _MessageBubble extends StatelessWidget {
   final String content;
   final bool isUser;
@@ -448,6 +541,9 @@ class _MessageBubble extends StatelessWidget {
     final assistantBubbleColor = isDark
         ? const Color(0xFF2A2A2A)
         : const Color(0xFFEAEAEA);
+
+    // Parse thinking content from message
+    final (thinkingParts, cleanContent) = _parseThinking(content);
 
     // Collect extra metadata for verbose mode
     final List<String> metaLines = [];
@@ -511,23 +607,30 @@ class _MessageBubble extends StatelessWidget {
               ),
             ),
           ],
+          // Thinking block (collapsible)
+          if (thinkingParts.isNotEmpty)
+            _ThinkingBlock(
+              thinking: thinkingParts.join('\n\n'),
+              isDark: isDark,
+            ),
           // Message content — enhanced markdown rendering
-          MarkdownBody(
-            data: content,
-            selectable: true,
-            styleSheet: hermesMarkdownStyleSheet(context, isUser: isUser),
-            builders: {
-              'pre': HermesCodeBlockBuilder(isUser: isUser),
-            },
-            onTapLink: (text, href, title) async {
-              if (href != null) {
-                final uri = Uri.parse(href);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+          if (cleanContent.isNotEmpty)
+            MarkdownBody(
+              data: cleanContent,
+              selectable: true,
+              styleSheet: hermesMarkdownStyleSheet(context, isUser: isUser),
+              builders: {
+                'pre': HermesCodeBlockBuilder(isUser: isUser),
+              },
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  final uri = Uri.parse(href);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
                 }
-              }
-            },
-          ),
+              },
+            ),
         ],
       ),
     );
