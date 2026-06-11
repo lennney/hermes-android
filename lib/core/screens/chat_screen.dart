@@ -426,7 +426,7 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 /// Parse thinking content from message. Returns (thinking, remainingContent).
-/// Handles both complete and partial <think> tags (during streaming).
+/// Handles both complete and partial [thinking] tags (during streaming).
 (List<String>, String) _parseThinking(String content) {
   final thinkingParts = <String>[];
   var remaining = content;
