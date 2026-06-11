@@ -3,6 +3,8 @@
 // GET /api/sessions/{id}/messages.
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../ui/markdown_hermes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/connection_manager.dart';
@@ -445,7 +447,6 @@ class _MessageBubble extends StatelessWidget {
     final assistantBubbleColor = isDark
         ? const Color(0xFF2A2A2A)
         : const Color(0xFFEAEAEA);
-    final assistantTextColor = isDark ? Colors.white : Colors.black87;
 
     // Collect extra metadata for verbose mode
     final List<String> metaLines = [];
@@ -509,62 +510,22 @@ class _MessageBubble extends StatelessWidget {
               ),
             ),
           ],
-          // Message content
+          // Message content — enhanced markdown rendering
           MarkdownBody(
             data: content,
-            styleSheet: MarkdownStyleSheet(
-              p: (isUser
-                  ? theme.textTheme.bodyMedium?.copyWith(color: Colors.white)
-                  : theme.textTheme.bodyMedium?.copyWith(
-                      color: assistantTextColor,
-                    )),
-              code: TextStyle(
-                backgroundColor: (isUser ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.12),
-                fontFamily: 'monospace',
-                color: isUser ? Colors.white : null,
-              ),
-              a: TextStyle(
-                color: isUser ? Colors.white70 : theme.colorScheme.primary,
-              ),
-              h1: isUser
-                  ? theme.textTheme.headlineSmall?.copyWith(color: Colors.white)
-                  : theme.textTheme.headlineSmall,
-              h2: isUser
-                  ? theme.textTheme.titleLarge?.copyWith(color: Colors.white)
-                  : theme.textTheme.titleLarge,
-              h3: isUser
-                  ? theme.textTheme.titleMedium?.copyWith(color: Colors.white)
-                  : theme.textTheme.titleMedium,
-              blockquote: TextStyle(
-                color: isUser ? Colors.white60 : Colors.grey,
-                fontStyle: FontStyle.italic,
-              ),
-              blockquoteDecoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(
-                    color: isUser ? Colors.white38 : theme.colorScheme.primary,
-                    width: 3,
-                  ),
-                ),
-              ),
-              em: isUser
-                  ? theme.textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.white,
-                    )
-                  : theme.textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                    ),
-              strong: isUser
-                  ? theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    )
-                  : theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-            ),
+            selectable: true,
+            styleSheet: hermesMarkdownStyleSheet(context, isUser: isUser),
+            builders: {
+              'pre': HermesCodeBlockBuilder(isUser: isUser),
+            },
+            onTapLink: (text, href, title) async {
+              if (href != null) {
+                final uri = Uri.parse(href);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              }
+            },
           ),
         ],
       ),
