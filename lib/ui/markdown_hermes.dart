@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/app_localizations.dart';
 
 /// Enhanced markdown stylesheet for Hermes chat messages.
 ///
@@ -268,7 +269,7 @@ class _CodeBlockWidgetState extends State<_CodeBlockWidget> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _copied ? 'Copied!' : 'Copy',
+                        _copied ? S.of(context).copied : S.of(context).copy,
                         style: TextStyle(
                           fontSize: 11,
                           color: _copied

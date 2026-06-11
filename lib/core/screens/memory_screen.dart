@@ -8,6 +8,7 @@
 // API: GET /api/config returns the full config including memory.
 import 'package:flutter/material.dart';
 import '../services/connection_manager.dart';
+import '../../l10n/app_localizations.dart';
 
 class MemoryScreen extends StatefulWidget {
   final SavedConnection connection;
@@ -109,10 +110,10 @@ class _MemoryScreenState extends State<MemoryScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Memory'),
+            Text(S.of(context).memoryTitle),
             if (_source != null)
               Text(
-                'Source: $_source',
+                S.of(context).memorySource(_source ?? ''),
                 style: const TextStyle(fontSize: 11, color: Colors.grey),
               ),
           ],
@@ -143,7 +144,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
               const Icon(Icons.error_outline, size: 48, color: Colors.orange),
               const SizedBox(height: 16),
               Text(
-                'Failed to load memory',
+                S.of(context).failedToLoadMemory,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -155,7 +156,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _loadMemory,
-                child: const Text('Retry'),
+                child: Text(S.of(context).retry),
               ),
             ],
           ),
@@ -171,13 +172,12 @@ class _MemoryScreenState extends State<MemoryScreen> {
             Icon(Icons.psychology, size: 48, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No memory entries',
+              S.of(context).noMemoryEntries,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              'Memory entries are cross-session facts the agent remembers.\n'
-              'They are configured in ~/.hermes/config.yaml',
+              S.of(context).memoryDescription,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,

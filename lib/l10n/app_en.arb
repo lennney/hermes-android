@@ -1,0 +1,213 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Hermes Agent",
+  "hermesBrand": "HERMES",
+
+  "updateApiKey": "Update API Key",
+  "apiKeyLabel": "API Key",
+  "apiKeyHint": "API_SERVER_KEY from ~/.hermes/.env",
+  "cancel": "Cancel",
+  "save": "Save",
+  "connect": "Connect",
+  "retry": "Retry",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "send": "Send",
+  "refresh": "Refresh",
+  "close": "Close",
+
+  "noConnections": "No connections",
+  "noConnectionsHint": "Tap + to add a remote Hermes Gateway\n(API Server, port 8642)",
+  "addConnection": "Add Connection",
+  "addGatewayConnection": "Add Gateway Connection",
+  "label": "Label",
+  "host": "Host",
+  "hostHint": "192.168.1.50, 100.x.y.z, or hermes-machine.tailnet.ts.net",
+  "port": "Port",
+  "portHint": "8642 (API Server)",
+  "invalidApiKey": "Invalid API key. Server returned 401.",
+  "cannotReachHost": "Cannot reach {host}:{port}.",
+  "@cannotReachHost": {
+    "placeholders": {
+      "host": { "type": "String" },
+      "port": { "type": "int" }
+    }
+  },
+  "cannotReachHostCheck": "Cannot reach {host}:{port}. Check the host and port.",
+  "@cannotReachHostCheck": {
+    "placeholders": {
+      "host": { "type": "String" },
+      "port": { "type": "int" }
+    }
+  },
+  "serverRequiresApiKey": "Server requires an API key. Enter your API_SERVER_KEY.",
+  "key": "Key",
+  "keyCheckmark": "✓",
+  "keyCrossmark": "✗",
+
+  "newChat": "New Chat",
+  "memory": "Memory",
+  "cronJobs": "Cron Jobs",
+  "skills": "Skills",
+  "settings": "Settings",
+
+  "connectingTo": "Connecting to {url}...",
+  "@connectingTo": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+  "gatewayRunningHint": "Make sure the Gateway API Server is running\n(hermes gateway status)",
+  "connectionIssue": "Connection issue",
+  "noSessionsYet": "No sessions yet",
+  "tapPlusNewChat": "Tap the + button to start a new chat",
+
+  "responding": "Responding…",
+  "typeMessage": "Type a message…",
+  "failedToLoadMessages": "Failed to load messages",
+  "sendFailed": "Send failed: {error}",
+  "@sendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "copied": "Copied!",
+  "copy": "Copy",
+
+  "settingsTitle": "Settings",
+  "failedToLoadSettings": "Failed to load settings",
+  "modelSelection": "Model Selection",
+  "currentModel": "Current Model",
+  "contextTokens": "Context: {count} tokens",
+  "@contextTokens": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "provider": "Provider",
+  "model": "Model",
+  "applyModel": "Apply Model",
+  "modelSetSuccess": "Model set to {model} — applies to new sessions",
+  "@modelSetSuccess": {
+    "placeholders": {
+      "model": { "type": "String" }
+    }
+  },
+  "appearance": "Appearance",
+  "connection": "Connection",
+  "baseUrl": "Base URL",
+  "about": "About",
+  "aboutTitle": "Hermes Agent for Android",
+  "aboutVersion": "Version {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "aboutDescription": "Browse and manage your Hermes Agent sessions from your phone. Connects to a Hermes dashboard running on your local network.",
+  "verboseMode": "Verbose Mode",
+  "verboseModeSubtitle": "Show tool calls, thinking, and message metadata",
+  "themeSystem": "System",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+
+  "memoryTitle": "Memory",
+  "memorySource": "Source: {source}",
+  "@memorySource": {
+    "placeholders": {
+      "source": { "type": "String" }
+    }
+  },
+  "failedToLoadMemory": "Failed to load memory",
+  "noMemoryEntries": "No memory entries",
+  "memoryDescription": "Memory entries are cross-session facts the agent remembers.\nThey are configured in ~/.hermes/config.yaml",
+
+  "skillsCount": "Skills ({count})",
+  "@skillsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "failedToLoadSkills": "Failed to load skills",
+  "noSkillsFound": "No skills found",
+
+  "cronJobUntitled": "Untitled",
+  "jobResumed": "Job resumed",
+  "jobPaused": "Job paused",
+  "operationFailed": "Failed: {error}",
+  "@operationFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "deleteCronJob": "Delete Cron Job",
+  "deleteConfirm": "Delete "{name}"?",
+  "@deleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "deletedConfirm": "Deleted "{name}"",
+  "@deletedConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "deleteFailed": "Delete failed: {error}",
+  "@deleteFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "jobTriggered": "Job triggered",
+  "addCronJob": "Add Cron Job",
+  "cronJobAdded": "Cron job added",
+  "failedToAddJob": "Failed to add job: {error}",
+  "@failedToAddJob": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "editCronJob": "Edit Cron Job",
+  "cronJobUpdated": "Cron job updated",
+  "failedToUpdateJob": "Failed to update job: {error}",
+  "@failedToUpdateJob": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "nameLabel": "Name",
+  "nameHint": "e.g., Daily backup",
+  "promptLabel": "Prompt",
+  "promptHint": "What should the agent do?",
+  "scheduleLabel": "Schedule",
+  "scheduleHint": "e.g., 0 9 * * * or every 2h",
+  "scriptOnly": "Script only (no agent)",
+  "scriptOnlySubtitle": "Use for cron jobs backed by scripts.",
+  "requiredFields": "Name, prompt, and schedule are required",
+  "addNewCronJob": "Add new cron job",
+  "failedToLoadCronJobs": "Failed to load cron jobs",
+  "noCronJobs": "No cron jobs",
+  "script": "script",
+  "triggerNow": "Trigger now",
+  "resume": "Resume",
+  "pause": "Pause",
+  "lastRun": "Last: {time}",
+  "@lastRun": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "nextRun": "Next: {time}",
+  "@nextRun": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+
+  "language": "Language",
+  "languageEnglish": "English",
+  "languageChinese": "简体中文"
+}

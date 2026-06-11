@@ -1,6 +1,7 @@
 // Settings screen for model selection, theme toggle, and app info.
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../l10n/app_localizations.dart';
 import '../services/connection_manager.dart';
 import '../../main.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -120,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       await _client.setModel('main', _selectedProvider, _selectedModel);
       setState(() {
-        _successMsg = 'Model set to $_selectedModel — applies to new sessions';
+        _successMsg = S.of(context).modelSetSuccess(_selectedModel);
       });
     } catch (e) {
       setState(() {
@@ -133,12 +134,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(S.of(context).settingsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loading ? null : _loadData,
-            tooltip: 'Refresh',
+            tooltip: S.of(context).refresh,
           ),
         ],
       ),
@@ -161,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const Icon(Icons.error_outline, size: 48, color: Colors.orange),
               const SizedBox(height: 16),
               Text(
-                'Failed to load settings',
+                S.of(context).failedToLoadSettings,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -171,7 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(onPressed: _loadData, child: const Text('Retry')),
+              ElevatedButton(onPressed: _loadData, child: Text(S.of(context).retry)),
             ],
           ),
         ),
@@ -182,7 +183,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.all(16),
       children: [
         // ---- Section: Model ----
-        _buildSectionHeader('Model Selection'),
+        _buildSectionHeader(S.of(context).modelSelection),
         if (_modelInfo != null)
           Card(
             child: Padding(
@@ -198,7 +199,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Current Model',
+                        S.of(context).currentModel,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
@@ -213,7 +214,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        'Context: ${_modelInfo!['effective_context_length']} tokens',
+                        S.of(context).contextTokens(_modelInfo!['effective_context_length'] as int),
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -228,7 +229,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // Provider picker
         if (_providers.isNotEmpty) ...[
           _buildDropdown<String>(
-            label: 'Provider',
+            label: S.of(context).providerField,
             value:
                 _selectedProvider.isNotEmpty &&
                     _providers.contains(_selectedProvider)
@@ -257,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (_selectedProvider.isNotEmpty &&
             _providerModels.containsKey(_selectedProvider)) ...[
           _buildDropdown<String>(
-            label: 'Model',
+            label: S.of(context).modelField,
             value: _selectedModel,
             items: _providerModels[_selectedProvider]!.map((m) {
               final id = m['id'] as String? ?? '';
@@ -274,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: FilledButton.icon(
               onPressed: _applyModel,
               icon: const Icon(Icons.check),
-              label: const Text('Apply Model'),
+              label: Text(S.of(context).applyModel),
             ),
           ),
         ],
@@ -304,27 +305,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 16),
 
         // ---- Section: Theme ----
-        _buildSectionHeader('Appearance'),
+        _buildSectionHeader(S.of(context).appearance),
         _ThemeToggle(),
         const SizedBox(height: 8),
         _VerboseToggle(),
+        const SizedBox(height: 8),
+        _LanguagePicker(),
         const SizedBox(height: 16),
 
         // ---- Section: Connection ----
-        _buildSectionHeader('Connection'),
+        _buildSectionHeader(S.of(context).connectionSection),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _infoRow('Label', widget.connection.label),
+                _infoRow(S.of(context).labelField, widget.connection.label),
                 const SizedBox(height: 4),
-                _infoRow('Host', widget.connection.host),
+                _infoRow(S.of(context).hostField, widget.connection.host),
                 const SizedBox(height: 4),
-                _infoRow('Port', '${widget.connection.port}'),
+                _infoRow(S.of(context).portField, '${widget.connection.port}'),
                 const SizedBox(height: 4),
-                _infoRow('Base URL', widget.connection.baseUrl),
+                _infoRow(S.of(context).baseUrl, widget.connection.baseUrl),
               ],
             ),
           ),
@@ -332,7 +335,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 16),
 
         // ---- Section: About ----
-        _buildSectionHeader('About'),
+        _buildSectionHeader(S.of(context).about),
         _AboutCard(),
       ],
     );
@@ -422,16 +425,15 @@ class _AboutCardState extends State<_AboutCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Hermes Agent for Android',
+            Text(
+              S.of(context).aboutTitle,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text('Version ${_version.isNotEmpty ? _version : '…'}'),
+            Text(S.of(context).aboutVersion(_version.isNotEmpty ? _version : '…')),
             const SizedBox(height: 8),
-            const Text(
-              'Browse and manage your Hermes Agent sessions from your phone. '
-              'Connects to a Hermes dashboard running on your local network.',
+            Text(
+              S.of(context).aboutDescription,
               style: TextStyle(color: Colors.grey),
             ),
           ],
@@ -471,8 +473,8 @@ class _VerboseToggleState extends State<_VerboseToggle> {
   Widget build(BuildContext context) {
     return Card(
       child: SwitchListTile(
-        title: const Text('Verbose Mode'),
-        subtitle: const Text('Show tool calls, thinking, and message metadata'),
+        title: Text(S.of(context).verboseMode),
+        subtitle: Text(S.of(context).verboseModeSubtitle),
         secondary: const Icon(Icons.terminal),
         value: _verbose,
         onChanged: _set,
@@ -514,26 +516,88 @@ class _ThemeToggleState extends State<_ThemeToggle> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SegmentedButton<String>(
-        segments: const [
+        segments: [
           ButtonSegment(
             value: 'system',
-            label: Text('System'),
+            label: Text(S.of(context).themeSystem),
             icon: Icon(Icons.brightness_auto, size: 18),
           ),
           ButtonSegment(
             value: 'dark',
-            label: Text('Dark'),
+            label: Text(S.of(context).themeDark),
             icon: Icon(Icons.dark_mode, size: 18),
           ),
           ButtonSegment(
             value: 'light',
-            label: Text('Light'),
+            label: Text(S.of(context).themeLight),
             icon: Icon(Icons.light_mode, size: 18),
           ),
         ],
         selected: {_mode},
         onSelectionChanged: (s) => _setMode(s.first),
         style: ButtonStyle(visualDensity: VisualDensity.compact),
+      ),
+    );
+  }
+}
+
+class _LanguagePicker extends StatefulWidget {
+  @override
+  State<_LanguagePicker> createState() => _LanguagePickerState();
+}
+
+class _LanguagePickerState extends State<_LanguagePicker> {
+  String _langCode = 'en';
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() => _langCode = prefs.getString('language_code') ?? 'en');
+  }
+
+  Future<void> _setLang(String code) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language_code', code);
+    setState(() => _langCode = code);
+    if (!mounted) return;
+    final rootCtx = context.findAncestorStateOfType<HermesAppState>();
+    rootCtx?.setLocale(Locale(code));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(Icons.language, size: 20, color: Colors.grey[600]),
+          const SizedBox(width: 12),
+          Text(
+            S.of(context).language,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const Spacer(),
+          SegmentedButton<String>(
+            segments: [
+              ButtonSegment(
+                value: 'en',
+                label: Text(S.of(context).languageEnglish),
+              ),
+              ButtonSegment(
+                value: 'zh',
+                label: Text(S.of(context).languageChinese),
+              ),
+            ],
+            selected: {_langCode},
+            onSelectionChanged: (s) => _setLang(s.first),
+            style: ButtonStyle(visualDensity: VisualDensity.compact),
+          ),
+        ],
       ),
     );
   }

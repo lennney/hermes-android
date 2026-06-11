@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'l10n/app_localizations.dart';
 import 'core/services/connection_manager.dart';
 import 'core/screens/session_list_screen.dart';
 import 'core/utils/responsive.dart';
@@ -45,12 +47,20 @@ class HermesApp extends StatefulWidget {
 }
 
 class HermesAppState extends State<HermesApp> {
+  Locale? _locale;
+
+  Locale? get locale => _locale;
+  void setLocale(Locale locale) {
+    setState(() => _locale = locale);
+  }
+
   @override
   Widget build(BuildContext context) {
     const gold = Color(0xFFD4AF37);
 
     return MaterialApp(
-      title: 'Hermes Agent',
+      title: S.of(context).appTitle,
+      locale: _locale,
       themeMode: HermesApp.getThemeMode(widget.connManager.prefs),
       theme: ThemeData(
         colorSchemeSeed: gold,
@@ -98,6 +108,8 @@ class HermesAppState extends State<HermesApp> {
           foregroundColor: Colors.black,
         ),
       ),
+      localizationsDelegates: S.localizationsDelegates,
+      supportedLocales: S.supportedLocales,
       home: HomeScreen(connManager: widget.connManager),
     );
   }
@@ -220,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Update API Key'),
+          title: Text(S.of(context).updateApiKey),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -258,9 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               TextField(
                 controller: ctrl,
-                decoration: const InputDecoration(
-                  labelText: 'API Key',
-                  hintText: 'API_SERVER_KEY from ~/.hermes/.env',
+                decoration: InputDecoration(
+                  labelText: S.of(context).apiKeyLabel,
+                  hintText: S.of(context).apiKeyHint,
                 ),
                 obscureText: true,
                 enabled: !validating,
@@ -270,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             TextButton(
               onPressed: validating ? null : () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: Text(S.of(context).cancel),
             ),
             FilledButton(
               onPressed: validating
@@ -298,14 +310,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.pop(ctx);
                         } else {
                           setDialogState(() {
-                            error = 'Invalid API key. Server returned 401.';
+                            error = S.of(context).invalidApiKey;
                             validating = false;
                           });
                         }
                       } catch (e) {
                         if (!ctx.mounted) return;
                         setDialogState(() {
-                          error = 'Cannot reach ${conn.host}:${conn.port}.';
+                          error = S.of(context).cannotReachHost(conn.host, conn.port);
                           validating = false;
                         });
                       }
@@ -319,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Save'),
+                  : Text(S.of(context).save),
             ),
           ],
         ),
@@ -347,10 +359,10 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           itemBuilder: (_) => [
-            const PopupMenuItem(value: 'apikey', child: Text('Update API Key')),
-            const PopupMenuItem(
+            PopupMenuItem(value: 'apikey', child: Text(S.of(context).updateApiKey)),
+            PopupMenuItem(
               value: 'delete',
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(S.of(context).delete, style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
@@ -381,12 +393,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icon(Icons.cloud_outlined, size: 64, color: Colors.grey[800]),
                   const SizedBox(height: 16),
                   Text(
-                    'No connections',
+                    S.of(context).noConnections,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap + to add a remote Hermes Gateway\n(API Server, port 8642)',
+                    S.of(context).noConnectionsHint,
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
@@ -418,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Add Connection',
+        tooltip: S.of(context).addConnection,
         onPressed: _showAddDialog,
         child: const Icon(Icons.add, color: Colors.black),
       ),
@@ -478,15 +490,15 @@ class _AddDialogState extends State<_AddDialog> {
       } else {
         setState(() {
           _error = apiKey.isEmpty
-              ? 'Server requires an API key. Enter your API_SERVER_KEY.'
-              : 'Invalid API key. Server returned 401.';
+              ? S.of(context).serverRequiresApiKey
+              : S.of(context).invalidApiKey;
           _validating = false;
         });
       }
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = 'Cannot reach $host:$port. Check the host and port.';
+        _error = S.of(context).cannotReachHostCheck(host, port);
         _validating = false;
       });
     }
@@ -495,7 +507,7 @@ class _AddDialogState extends State<_AddDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Gateway Connection'),
+      title: Text(S.of(context).addGatewayConnection),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -530,15 +542,14 @@ class _AddDialogState extends State<_AddDialog> {
             ],
             TextField(
               controller: _label,
-              decoration: const InputDecoration(labelText: 'Label'),
+              decoration: InputDecoration(labelText: S.of(context).labelField),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _host,
-              decoration: const InputDecoration(
-                labelText: 'Host',
-                hintText:
-                    '192.168.1.50, 100.x.y.z, or hermes-machine.tailnet.ts.net',
+              decoration: InputDecoration(
+                labelText: S.of(context).hostField,
+                hintText: S.of(context).hostHint,
               ),
               keyboardType: TextInputType.text,
               autocorrect: false,
@@ -546,18 +557,18 @@ class _AddDialogState extends State<_AddDialog> {
             const SizedBox(height: 12),
             TextField(
               controller: _port,
-              decoration: const InputDecoration(
-                labelText: 'Port',
-                hintText: '8642 (API Server)',
+              decoration: InputDecoration(
+                labelText: S.of(context).portField,
+                hintText: S.of(context).portHint,
               ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _apiKey,
-              decoration: const InputDecoration(
-                labelText: 'API Key',
-                hintText: 'API_SERVER_KEY from ~/.hermes/.env',
+              decoration: InputDecoration(
+                labelText: S.of(context).apiKeyLabel,
+                hintText: S.of(context).apiKeyHint,
               ),
               obscureText: true,
             ),
@@ -567,7 +578,7 @@ class _AddDialogState extends State<_AddDialog> {
       actions: [
         TextButton(
           onPressed: _validating ? null : () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(S.of(context).cancel),
         ),
         FilledButton(
           onPressed: _validating ? null : _validateAndSave,
@@ -580,7 +591,7 @@ class _AddDialogState extends State<_AddDialog> {
                     color: Colors.white,
                   ),
                 )
-              : const Text('Connect'),
+              : Text(S.of(context).connect),
         ),
       ],
     );

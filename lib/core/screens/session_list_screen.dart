@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../l10n/app_localizations.dart';
 import '../services/connection_manager.dart';
 import 'chat_screen.dart';
 import 'settings_screen.dart';
@@ -69,7 +70,7 @@ class _SessionListScreenState extends State<SessionListScreen> {
     final sessionId = GatewayChatClient.generateSessionId();
     final session = Session(
       id: sessionId,
-      title: 'New Chat',
+      title: S.of(context).newChat,
       model: 'hermes-agent',
       source: 'mobile',
       messageCount: 0,
@@ -127,7 +128,7 @@ class _SessionListScreenState extends State<SessionListScreen> {
       ),
       drawer: _buildDrawer(),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'New Chat',
+        tooltip: S.of(context).newChat,
         onPressed: _createNewSession,
         child: const Icon(Icons.chat, color: Colors.black),
       ),
@@ -168,26 +169,26 @@ class _SessionListScreenState extends State<SessionListScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.memory),
-              title: const Text('Memory'),
+              title: Text(S.of(context).memory),
               onTap: () =>
                   _openScreen(MemoryScreen(connection: widget.connection)),
             ),
             ListTile(
               leading: const Icon(Icons.schedule),
-              title: const Text('Cron Jobs'),
+              title: Text(S.of(context).cronJobs),
               onTap: () =>
                   _openScreen(CronScreen(connection: widget.connection)),
             ),
             ListTile(
               leading: const Icon(Icons.auto_awesome),
-              title: const Text('Skills'),
+              title: Text(S.of(context).skills),
               onTap: () =>
                   _openScreen(SkillsScreen(connection: widget.connection)),
             ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(S.of(context).settings),
               onTap: () =>
                   _openScreen(SettingsScreen(connection: widget.connection)),
             ),
@@ -210,17 +211,17 @@ class _SessionListScreenState extends State<SessionListScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Connecting to ${widget.connection.baseUrl}...',
+              S.of(context).connectingTo(widget.connection.baseUrl),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              'Make sure the Gateway API Server is running\n(hermes gateway status)',
+              S.of(context).gatewayRunningHint,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 24),
-            ElevatedButton(onPressed: _checkHealth, child: const Text('Retry')),
+            ElevatedButton(onPressed: _checkHealth, child: Text(S.of(context).retry)),
           ],
         ),
       );
@@ -236,7 +237,7 @@ class _SessionListScreenState extends State<SessionListScreen> {
             Icon(Icons.error_outline, size: 48, color: Colors.orange),
             const SizedBox(height: 16),
             Text(
-              'Connection issue',
+              S.of(context).connectionIssue,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -251,7 +252,7 @@ class _SessionListScreenState extends State<SessionListScreen> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _fetchSessions,
-              child: const Text('Retry'),
+              child: Text(S.of(context).retry),
             ),
           ],
         ),
@@ -266,12 +267,12 @@ class _SessionListScreenState extends State<SessionListScreen> {
             Icon(Icons.chat_bubble_outline, size: 48, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No sessions yet',
+              S.of(context).noSessionsYet,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap the + button to start a new chat',
+              S.of(context).tapPlusNewChat,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),

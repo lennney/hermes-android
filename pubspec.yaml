@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # i18n
+  intl: any
 
   # UI
   cupertino_icons: ^1.0.8

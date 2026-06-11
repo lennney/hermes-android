@@ -6,6 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../ui/markdown_hermes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../l10n/app_localizations.dart';
 
 import '../services/connection_manager.dart';
 import '../utils/responsive.dart';
@@ -212,7 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Send failed: $e'),
+          content: Text(S.of(context).sendFailed(e.toString())),
           backgroundColor: Colors.orange,
           duration: const Duration(seconds: 6),
         ),
@@ -275,7 +276,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           if (_streaming)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(right: 8),
               child: Row(
                 children: [
@@ -285,7 +286,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   SizedBox(width: 8),
-                  Text('Responding…', style: TextStyle(fontSize: 13)),
+                  Text(S.of(context).responding, style: TextStyle(fontSize: 13)),
                 ],
               ),
             )
@@ -293,7 +294,7 @@ class _ChatScreenState extends State<ChatScreen> {
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: _loading ? null : _fetchMessages,
-              tooltip: 'Refresh',
+              tooltip: S.of(context).refresh,
             ),
         ],
       ),
@@ -329,7 +330,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _textController,
                 decoration: InputDecoration(
-                  hintText: 'Type a message…',
+                  hintText: S.of(context).typeMessage,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
@@ -359,7 +360,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   : IconButton(
                       icon: const Icon(Icons.send, size: 20),
                       onPressed: _sendMessage,
-                      tooltip: 'Send',
+                      tooltip: S.of(context).send,
                     ),
             ),
           ],
@@ -383,7 +384,7 @@ class _ChatScreenState extends State<ChatScreen> {
               const Icon(Icons.warning_amber, size: 48, color: Colors.orange),
               const SizedBox(height: 16),
               Text(
-                'Failed to load messages',
+                S.of(context).failedToLoadMessages,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -395,7 +396,7 @@ class _ChatScreenState extends State<ChatScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _fetchMessages,
-                child: const Text('Retry'),
+                child: Text(S.of(context).retry),
               ),
             ],
           ),
